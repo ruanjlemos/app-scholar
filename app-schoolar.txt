@@ -1,0 +1,486 @@
+import React, { useState } from 'react';
+import {
+StyleSheet,
+Text,
+View,
+Image,
+TouchableOpacity,
+Alert,
+TextInput,
+ScrollView
+} from 'react-native';
+
+export default function App() {
+const [tela, setTela] = useState('inicio');
+
+const [nome, setNome] = useState('');
+const [curso, setCurso] = useState('');
+
+const [alunos, setAlunos] = useState([]);
+
+const [alunoEditando, setAlunoEditando] = useState(null);
+
+function cadastrarAluno() {
+if (nome.trim() === ''  curso.trim() === '') {
+Alert.alert(
+'Atenção',
+'Preencha o nome e o curso.'
+);
+return;
+}
+
+const novoAluno = {
+  id Date.now(),
+  nome nome.trim(),
+  curso curso.trim()
+};
+
+setAlunos((listaAtual) = {
+  return [...listaAtual, novoAluno];
+});
+
+setNome('');
+setCurso('');
+
+Alert.alert(
+  'Sucesso',
+  'Aluno cadastrado com sucesso!'
+);
+
+setTela('consulta');
+
+}
+
+function iniciarEdicao(aluno) {
+setAlunoEditando(aluno);
+setNome(aluno.nome);
+setCurso(aluno.curso);
+setTela('editar');
+}
+
+function salvarEdicao() {
+if (nome.trim() === ''  curso.trim() === '') {
+Alert.alert(
+'Atenção',
+'Preencha o nome e o curso.'
+);
+return;
+}
+
+setAlunos((listaAtual) = {
+  return listaAtual.map((aluno) = {
+    if (aluno.id === alunoEditando.id) {
+      return {
+        id aluno.id,
+        nome nome.trim(),
+        curso curso.trim()
+      };
+    }
+
+    return aluno;
+  });
+});
+
+setNome('');
+setCurso('');
+setAlunoEditando(null);
+
+Alert.alert(
+  'Sucesso',
+  'Cadastro atualizado com sucesso!'
+);
+
+setTela('consulta');
+
+}
+
+function excluirAluno(id) {
+setAlunos((listaAtual) = {
+const novaLista = listaAtual.filter(
+(aluno) = aluno.id !== id
+);
+
+  return novaLista;
+});
+
+}
+
+function abrirCadastro() {
+setNome('');
+setCurso('');
+setTela('cadastro');
+}
+
+function abrirConsulta() {
+setTela('consulta');
+}
+
+function abrirSobre() {
+setTela('sobre');
+}
+
+function voltarInicio() {
+setTela('inicio');
+}
+
+function cancelarEdicao() {
+setNome('');
+setCurso('');
+setAlunoEditando(null);
+setTela('consulta');
+}
+
+if (tela === 'cadastro') {
+return (
+ScrollView contentContainerStyle={styles.container}
+Text style={styles.titulo}
+Cadastrar Aluno
+Text
+
+    TextInput
+      style={styles.input}
+      placeholder=Nome do aluno
+      value={nome}
+      onChangeText={setNome}
+    
+
+    TextInput
+      style={styles.input}
+      placeholder=Curso
+      value={curso}
+      onChangeText={setCurso}
+    
+
+    TouchableOpacity
+      style={styles.botao}
+      onPress={cadastrarAluno}
+    
+      Text style={styles.textoBotao}
+        Cadastrar
+      Text
+    TouchableOpacity
+
+    TouchableOpacity
+      style={styles.botaoVoltar}
+      onPress={voltarInicio}
+    
+      Text style={styles.textoVoltar}
+        Voltar
+      Text
+    TouchableOpacity
+  ScrollView
+);
+
+}
+
+if (tela === 'editar') {
+return (
+ScrollView contentContainerStyle={styles.container}
+Text style={styles.titulo}
+Editar Cadastro
+Text
+
+    TextInput
+      style={styles.input}
+      placeholder=Nome do aluno
+      value={nome}
+      onChangeText={setNome}
+    
+
+    TextInput
+      style={styles.input}
+      placeholder=Curso
+      value={curso}
+      onChangeText={setCurso}
+    
+
+    TouchableOpacity
+      style={styles.botao}
+      onPress={salvarEdicao}
+    
+      Text style={styles.textoBotao}
+        Salvar alterações
+      Text
+    TouchableOpacity
+
+    TouchableOpacity
+      style={styles.botaoVoltar}
+      onPress={cancelarEdicao}
+    
+      Text style={styles.textoVoltar}
+        Cancelar
+      Text
+    TouchableOpacity
+  ScrollView
+);
+
+}
+
+if (tela === 'consulta') {
+return (
+ScrollView contentContainerStyle={styles.container}
+Text style={styles.titulo}
+Consultar Alunos
+Text
+
+    {alunos.length === 0  (
+      Text style={styles.mensagem}
+        Nenhum aluno cadastrado.
+      Text
+    )  (
+      alunos.map((aluno) = (
+        View
+          key={aluno.id}
+          style={styles.card}
+        
+          Text style={styles.nomeAluno}
+            {aluno.nome}
+          Text
+
+          Text style={styles.cursoAluno}
+            Curso {aluno.curso}
+          Text
+
+          TouchableOpacity
+            style={styles.botaoEditar}
+            onPress={() = iniciarEdicao(aluno)}
+          
+            Text style={styles.textoBotao}
+              Editar cadastro
+            Text
+          TouchableOpacity
+
+          TouchableOpacity
+            style={styles.botaoExcluir}
+            onPress={() = excluirAluno(aluno.id)}
+          
+            Text style={styles.textoExcluir}
+              Excluir cadastro
+            Text
+          TouchableOpacity
+        View
+      ))
+    )}
+
+    TouchableOpacity
+      style={styles.botaoVoltar}
+      onPress={voltarInicio}
+    
+      Text style={styles.textoVoltar}
+        Voltar
+      Text
+    TouchableOpacity
+  ScrollView
+);
+
+}
+
+if (tela === 'sobre') {
+return (
+View style={styles.container}
+Text style={styles.titulo}
+Sobre
+Text
+
+    Text style={styles.textoSobre}
+      APP Scholar
+    Text
+
+    Text style={styles.textoSobre}
+      Sistema Acadêmico Mobile
+    Text
+
+    Text style={styles.textoSobre}
+      Aplicativo desenvolvido para
+      gerenciamento acadêmico.
+    Text
+
+    TouchableOpacity
+      style={styles.botaoVoltar}
+      onPress={voltarInicio}
+    
+      Text style={styles.textoVoltar}
+        Voltar
+      Text
+    TouchableOpacity
+  View
+);
+
+}
+
+return (
+View style={styles.container}
+Image
+source={require('.assetsimages.png')}
+style={styles.logo}
+
+
+  Text style={styles.titulo}
+    APP Scholar
+  Text
+
+  Text style={styles.subtitulo}
+    Sistema Acadêmico Mobile
+  Text
+
+  TouchableOpacity
+    style={styles.botao}
+    onPress={abrirCadastro}
+  
+    Text style={styles.textoBotao}
+      Cadastrar Aluno
+    Text
+  TouchableOpacity
+
+  TouchableOpacity
+    style={styles.botao}
+    onPress={abrirConsulta}
+  
+    Text style={styles.textoBotao}
+      Consultar Alunos
+    Text
+  TouchableOpacity
+
+  TouchableOpacity
+    style={styles.botao}
+    onPress={abrirSobre}
+  
+    Text style={styles.textoBotao}
+      Sobre
+    Text
+  TouchableOpacity
+View
+
+);
+}
+
+const styles = StyleSheet.create({
+container {
+flexGrow 1,
+backgroundColor '#fff',
+alignItems 'center',
+justifyContent 'center',
+padding 25
+},
+
+logo {
+width 150,
+height 150,
+marginBottom 20
+},
+
+titulo {
+fontSize 32,
+fontWeight 'bold',
+color '#1565C0',
+marginBottom 10,
+textAlign 'center'
+},
+
+subtitulo {
+fontSize 18,
+marginBottom 40,
+color '#666',
+textAlign 'center'
+},
+
+botao {
+width '80%',
+backgroundColor '#1976D2',
+padding 15,
+borderRadius 10,
+marginBottom 15,
+alignItems 'center'
+},
+
+textoBotao {
+fontSize 17,
+fontWeight 'bold',
+color '#FFFFFF',
+textAlign 'center'
+},
+
+botaoVoltar {
+width '80%',
+backgroundColor '#E0E0E0',
+padding 15,
+borderRadius 10,
+marginTop 10,
+alignItems 'center'
+},
+
+textoVoltar {
+fontSize 18,
+fontWeight 'bold',
+color '#1565C0'
+},
+
+input {
+width '80%',
+borderWidth 1,
+borderColor '#BBBBBB',
+borderRadius 10,
+padding 15,
+marginBottom 15,
+fontSize 16,
+backgroundColor '#FFFFFF'
+},
+
+mensagem {
+fontSize 18,
+color '#666',
+marginBottom 25,
+textAlign 'center'
+},
+
+card {
+width '90%',
+backgroundColor '#EAF3FF',
+padding 18,
+borderRadius 10,
+marginBottom 15
+},
+
+nomeAluno {
+fontSize 19,
+fontWeight 'bold',
+color '#1565C0',
+marginBottom 5
+},
+
+cursoAluno {
+fontSize 16,
+color '#444',
+marginBottom 15
+},
+
+botaoEditar {
+width '100%',
+backgroundColor '#1976D2',
+padding 12,
+borderRadius 8,
+alignItems 'center',
+marginBottom 10
+},
+
+botaoExcluir {
+width '100%',
+backgroundColor '#D32F2F',
+padding 12,
+borderRadius 8,
+alignItems 'center'
+},
+
+textoExcluir {
+color '#FFFFFF',
+fontSize 16,
+fontWeight 'bold'
+},
+
+textoSobre {
+fontSize 18,
+color '#444',
+textAlign 'center',
+marginBottom 15
+}
+});
